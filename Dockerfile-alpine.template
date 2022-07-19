@@ -1,0 +1,19 @@
+# build stage
+FROM alpine:^ALPINE_VERSION as builder
+RUN apk add --no-cache clang llvm-dev g++ \ 
+        wget unzip bash libc6-compat git 
+RUN git clone https://github.com/odin-lang/Odin
+WORKDIR /Odin
+RUN git checkout ^ODIN_VERSION
+RUN bash build_odin.sh
+
+# actual odin image
+FROM alpine:^ALPINE_VERSION as odin_alpine
+RUN apk add clang g++
+RUN mkdir /Odin
+COPY --from=builder /Odin/vendor /Odin/vendor
+COPY --from=builder /Odin/shared /Odin/shared
+COPY --from=builder /Odin/odin /Odin/odin
+COPY --from=builder /Odin/examples /Odin/examples
+COPY --from=builder /Odin/core /Odin/core
+ENV PATH $PATH:/Odin
