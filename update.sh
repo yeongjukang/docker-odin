@@ -1,7 +1,9 @@
 #!/bin/sh
+set -x
+
 ALPINE_VERSION="3.16"
 DEBIAN_VERSION="bullseye"
-ODIN_VERSION="dev-2022-07"
+ODIN_VERSION="dev-2022-08"
 
 mkdir -p $ODIN_VERSION/alpine
 mkdir -p $ODIN_VERSION/debian
