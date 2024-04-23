@@ -1,23 +1,30 @@
 # https://github.com/nodejs/docker-node/
 # build stage
-FROM debian:^DEBIAN_VERSION as builder
+FROM debian:12.5 as builder
 RUN apt-get update -y
 RUN apt-get install -y \
-        llvm-dev \
-        clang \
-        git 
+        llvm-14-dev \
+        clang-14 \
+        git
+RUN ln -s /usr/bin/clang-14 /usr/bin/clang
+RUN ln -s /usr/bin/clang++-14 /usr/bin/clang++
 RUN git clone https://github.com/odin-lang/Odin
-RUN git checkout ^ODIN_VERSION
+WORKDIR /Odin
+RUN git checkout dev-2024-04a
 RUN ./build_odin.sh
 
 # actual odin image
-FROM debian:^DEBIAN_VERSION as odin_debian
+FROM debian:12.5 as odin_debian
 RUN apt-get update -y
-RUN apt-get install clang -y
+RUN apt-get install clang-14 -y
+RUN ln -s /usr/bin/clang-14 /usr/bin/clang
 RUN mkdir /Odin
 COPY --from=builder /Odin/vendor /Odin/vendor
 COPY --from=builder /Odin/shared /Odin/shared
 COPY --from=builder /Odin/odin /Odin/odin
 COPY --from=builder /Odin/examples /Odin/examples
 COPY --from=builder /Odin/core /Odin/core
+COPY --from=builder /Odin/base /Odin/base
+
 ENV PATH $PATH:/Odin
+ENV ODIN_ROOT /Odin
