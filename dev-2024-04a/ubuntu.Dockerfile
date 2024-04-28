@@ -1,6 +1,5 @@
-# https://github.com/nodejs/docker-node/
 # build stage
-FROM debian:12.5 as builder
+FROM ubuntu:jammy as builder
 RUN apt-get update -y
 RUN apt-get install -y \
         llvm-14-dev \
@@ -14,7 +13,7 @@ RUN git checkout dev-2024-04a
 RUN ./build_odin.sh
 
 # actual odin image
-FROM debian:12.5 as odin_debian
+FROM ubuntu:jammy as odin_ubuntu
 RUN apt-get update -y
 RUN apt-get install clang-14 -y
 RUN ln -s /usr/bin/clang-14 /usr/bin/clang
