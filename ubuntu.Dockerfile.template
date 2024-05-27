@@ -2,11 +2,11 @@
 FROM ubuntu:^UBUNTU_VERISON as builder
 RUN apt-get update -y
 RUN apt-get install -y \
-        llvm-14-dev \
-        clang-14 \
+        llvm-18-dev \
+        clang-18 \
         git
-RUN ln -s /usr/bin/clang-14 /usr/bin/clang
-RUN ln -s /usr/bin/clang++-14 /usr/bin/clang++
+RUN ln -s /usr/bin/clang-18 /usr/bin/clang
+RUN ln -s /usr/bin/clang++-18 /usr/bin/clang++
 RUN git clone https://github.com/odin-lang/Odin
 WORKDIR /Odin
 RUN git checkout ^ODIN_VERSION
@@ -15,8 +15,8 @@ RUN ./build_odin.sh
 # actual odin image
 FROM ubuntu:^UBUNTU_VERISON as odin_ubuntu
 RUN apt-get update -y
-RUN apt-get install clang-14 -y
-RUN ln -s /usr/bin/clang-14 /usr/bin/clang
+RUN apt-get install clang-18 -y
+RUN ln -s /usr/bin/clang-18 /usr/bin/clang
 RUN mkdir /Odin
 COPY --from=builder /Odin/vendor /Odin/vendor
 COPY --from=builder /Odin/shared /Odin/shared

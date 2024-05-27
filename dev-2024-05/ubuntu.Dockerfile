@@ -1,22 +1,22 @@
 # build stage
-FROM ubuntu:jammy as builder
+FROM ubuntu:noble-20240429 as builder
 RUN apt-get update -y
 RUN apt-get install -y \
-        llvm-14-dev \
-        clang-14 \
+        llvm-18-dev \
+        clang-18 \
         git
-RUN ln -s /usr/bin/clang-14 /usr/bin/clang
-RUN ln -s /usr/bin/clang++-14 /usr/bin/clang++
+RUN ln -s /usr/bin/clang-18 /usr/bin/clang
+RUN ln -s /usr/bin/clang++-18 /usr/bin/clang++
 RUN git clone https://github.com/odin-lang/Odin
 WORKDIR /Odin
-RUN git checkout dev-2024-04a
+RUN git checkout dev-2024-05
 RUN ./build_odin.sh
 
 # actual odin image
-FROM ubuntu:jammy as odin_ubuntu
+FROM ubuntu:noble-20240429 as odin_ubuntu
 RUN apt-get update -y
-RUN apt-get install clang-14 -y
-RUN ln -s /usr/bin/clang-14 /usr/bin/clang
+RUN apt-get install clang-18 -y
+RUN ln -s /usr/bin/clang-18 /usr/bin/clang
 RUN mkdir /Odin
 COPY --from=builder /Odin/vendor /Odin/vendor
 COPY --from=builder /Odin/shared /Odin/shared
